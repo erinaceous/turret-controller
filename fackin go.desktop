@@ -1,0 +1,6 @@
+[Desktop Entry]
+Comment=
+Terminal=true
+Name=fackin go
+Exec=bash -c 'cd /home/turret/turret-controller; ./run.py'
+Type=Application
