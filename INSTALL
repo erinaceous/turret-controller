@@ -1,0 +1,15 @@
+Need a bunch of system packages:
+
+    sudo dnf install htop tmux java-1.8.0-jdk opencv-python3 \
+                     python3-virtualenv python3-pip python3-pyserial \
+                     python3-devel python3-numpy
+
+    sudo pip3 install inputs
+
+
+Also need to add own user to `dialout` user group to allow access to Arduino
+over serial:
+
+    sudo gpasswd -a `whoami` dialout
+
+
