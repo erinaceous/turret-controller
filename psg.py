@@ -2,6 +2,7 @@
     psg.py: Code for talking to an Arduino running
     Project Sentry Gun firmware over USB serial
 """
+import threading
 import logging
 import serial
 import struct
@@ -11,13 +12,14 @@ import time
 logger = logging.getLogger(__name__)
 
 
-class Arduino(object):
+class Arduino(threading.Thread):
 
     def __init__(
             self, serial_path='/dev/ttyACM0', serial_baud=4800,
             setup=True, wait=True, max_retries=3,
-            min_xy=0, max_xy=255
+            min_xy=0, max_xy=255, update_interval=0.0
     ):
+        super(Arduino, self).__init__()
         self.serial_path = serial_path
         self.serial_baud = serial_baud
         self.wait = wait
@@ -27,12 +29,14 @@ class Arduino(object):
         self.last_x = 0
         self.last_y = 0
         self.fire = False
-        self.fire_selector = 0
+        self.fire_selector = 3
         self.scan_selector = 0
         self.retries = 0
         self.max_retries = max_retries
         self.min_xy = min_xy
         self.max_xy = max_xy
+        self.update_interval = update_interval
+        self.daemon = True
 
     def _setup_serial(self):
         self.serial = serial.Serial(self.serial_path, self.serial_baud)
@@ -52,6 +56,24 @@ class Arduino(object):
             val = 0.0
 
         return int(val * self.max_xy)
+
+    def run(self):
+        while True:
+            self.command(
+                self.last_x, self.last_y,
+                self.fire, self.fire_selector,
+                self.scan_selector
+            )
+            time.sleep(self.update_interval)
+
+    def command_async(
+            self, x, y, fire, fire_selector, scan_selector
+    ):
+        self.last_x = x
+        self.last_y = y
+        self.fire = fire
+        self.fire_selector = fire_selector
+        self.scan_selector = scan_selector
 
     def command(
             self, x, y, fire, fire_selector, scan_selector

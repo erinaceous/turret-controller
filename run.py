@@ -7,6 +7,9 @@
 """
 import logging
 import time
+import cam
+import cv2
+import gui
 import joy
 import psg
 
@@ -22,11 +25,21 @@ def main():
     a = psg.Arduino()
     j = joy.Joy()
     j.start()
+    a.start()
+    c = cam.Cam()
+    g = gui.GUI()
+
     while True:
-        a.command(
+        a.command_async(
             j.x, j.y, j.fire, 3, 0
         )
-        time.sleep(0.2)
+        ret, frame = c.read()
+        g.target_x = j.x
+        g.target_y = j.y
+        g.target_fire = j.fire
+        if ret:
+            g.render(frame)
+        cv2.waitKey(1)
 
 
 if __name__ == '__main__':
