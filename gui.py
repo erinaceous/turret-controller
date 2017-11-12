@@ -17,6 +17,8 @@ class GUI(object):
         self.win_width = 0
         self.win_height = 0
         self.win_name = win_name
+        self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.status_text_top_left = ''
 
     def render(self, frame):
         h, w, d = frame.shape
@@ -27,4 +29,14 @@ class GUI(object):
         if self.target_fire:
             tc = (0, 0, 255)
         gui_frame = cv2.circle(gui_frame, (tx, ty), 32, tc, 2)
+        cv2.putText(
+            gui_frame,
+            self.status_text_top_left,
+            (16, 16),
+            self.font,
+            0.4,
+            (255, 255, 255),
+            1,
+            cv2.LINE_AA
+        )
         cv2.imshow(self.win_name, gui_frame)

@@ -14,7 +14,7 @@ import joy
 import psg
 
 
-log_lvl = logging.DEBUG
+log_lvl = logging.WARNING
 
 
 logging.basicConfig(level=log_lvl)
@@ -37,6 +37,8 @@ def main():
         g.target_x = j.x
         g.target_y = j.y
         g.target_fire = j.fire
+        # frame = c.detect_blobs(frame)
+        g.status_text_top_left = a.last_string.decode('utf8')
         if ret:
             g.render(frame)
         cv2.waitKey(1)
