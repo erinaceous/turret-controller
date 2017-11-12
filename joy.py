@@ -20,8 +20,8 @@ class Joy(threading.Thread):
         self.max_x = max_x
         self.min_y = min_y
         self.max_y = max_y
-        self.deadband_x = 0.1
-        self.deadband_y = 0.1
+        self.deadband_x = 0.15
+        self.deadband_y = 0.15
         self.x_code = x_code
         self.y_code = y_code
         self.trigger_code = trigger_code
@@ -42,12 +42,12 @@ class Joy(threading.Thread):
             for event in self.input.read():
                 if event.code == self.x_code:
                     x = self.scale(event.state, self.min_x, self.max_x)
-                    if math.fabs(0.5 - x) < self.deadband_x:
+                    if math.fabs(0.5 - x) < self.deadband_x and self.y == 0.5:
                         x = 0.5
                     self.x = x
                 elif event.code == self.y_code:
                     y = self.scale(event.state, self.min_y, self.max_y)
-                    if math.fabs(0.5 - y) < self.deadband_y:
+                    if math.fabs(0.5 - y) < self.deadband_y and self.x == 0.5:
                         y = 0.5
                     self.y = y
                 elif event.code == self.trigger_code:

@@ -34,9 +34,21 @@ def main():
     s = state.State()
     g.deadband_x = j.deadband_x
     g.deadband_y = j.deadband_y
+    last_frame_gray = None
     while True:
-        s.target_x = j.x
-        s.target_y = j.y
+        ret, frame = c.read()
+        if s.tracking:
+            # TODO: automated camera object tracking stuff
+            # frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # frame = c.detect_blobs(frame)
+            # frame = c.track_colour(frame, hue=170)
+            # frame, last_frame_gray = c.motion_detect(
+            #     frame, frame_gray, last_frame_gray
+            # )
+            pass
+        else:
+            s.target_x = j.x
+            s.target_y = j.y
         s.fire = j.fire
         s.scanning = True
         s.mode = 1
@@ -44,12 +56,11 @@ def main():
         a.command_async(
             s.target_x, s.target_y, s.fire, s.mode, s.scanning
         )
-        ret, frame = c.read()
+
         g.target_x = s.target_x
         g.target_y = s.target_y
         g.target_fire = s.fire
         g.target_automatic = s.tracking
-        # frame = c.detect_blobs(frame)
         g.status_text_top_left = a.last_string.decode('utf8')
         g.warning_top_left = a.is_hanging()
         if ret:
