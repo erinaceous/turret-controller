@@ -3,6 +3,7 @@
 """
 import threading
 import inputs
+import math
 
 
 class Joy(threading.Thread):
@@ -19,6 +20,8 @@ class Joy(threading.Thread):
         self.max_x = max_x
         self.min_y = min_y
         self.max_y = max_y
+        self.deadband_x = 0.1
+        self.deadband_y = 0.1
         self.x_code = x_code
         self.y_code = y_code
         self.trigger_code = trigger_code
@@ -38,8 +41,14 @@ class Joy(threading.Thread):
         while True:
             for event in self.input.read():
                 if event.code == self.x_code:
-                    self.x = self.scale(event.state, self.min_x, self.max_x)
+                    x = self.scale(event.state, self.min_x, self.max_x)
+                    if math.fabs(0.5 - x) < self.deadband_x:
+                        x = 0.5
+                    self.x = x
                 elif event.code == self.y_code:
-                    self.y = self.scale(event.state, self.min_y, self.max_y)
+                    y = self.scale(event.state, self.min_y, self.max_y)
+                    if math.fabs(0.5 - y) < self.deadband_y:
+                        y = 0.5
+                    self.y = y
                 elif event.code == self.trigger_code:
                     self.fire = event.state
