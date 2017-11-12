@@ -5,6 +5,7 @@
     * grab webcam frames
     * serial output to arduino
 """
+from __future__ import print_function
 import logging
 import time
 import cam
@@ -22,6 +23,7 @@ psg.logger.setLevel(log_lvl)
 
 
 def main():
+    print('Hit Ctrl+C in this window to quit the program properly')
     a = psg.Arduino()
     j = joy.Joy()
     j.start()
@@ -31,7 +33,7 @@ def main():
 
     while True:
         a.command_async(
-            j.x, j.y, j.fire, 3, 0
+            j.x, j.y, j.fire, 1, 1
         )
         ret, frame = c.read()
         g.target_x = j.x
@@ -39,6 +41,7 @@ def main():
         g.target_fire = j.fire
         # frame = c.detect_blobs(frame)
         g.status_text_top_left = a.last_string.decode('utf8')
+        g.warning_top_left = a.is_hanging()
         if ret:
             g.render(frame)
         cv2.waitKey(1)

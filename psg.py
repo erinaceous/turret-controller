@@ -19,7 +19,8 @@ class Arduino(threading.Thread):
             setup=True, wait=True, max_retries=3,
             min_x=0, max_x=180,
             min_y=0, max_y=180,
-            update_interval=0.1
+            update_interval=0.1,
+            hanging_timeout=3.0
     ):
         super(Arduino, self).__init__()
         self.serial_path = serial_path
@@ -31,8 +32,8 @@ class Arduino(threading.Thread):
         self.last_x = 0
         self.last_y = 0
         self.fire = False
-        self.fire_selector = 3
-        self.scan_selector = 0
+        self.fire_selector = 1
+        self.scan_selector = 1
         self.retries = 0
         self.max_retries = max_retries
         self.min_x = min_x
@@ -42,6 +43,8 @@ class Arduino(threading.Thread):
         self.update_interval = update_interval
         self.daemon = True
         self.last_string = ''
+        self.hanging_timeout = hanging_timeout
+        self.last_command_time = time.time()
 
     def _setup_serial(self):
         self.serial = serial.Serial(self.serial_path, self.serial_baud)
@@ -108,3 +111,8 @@ class Arduino(threading.Thread):
             self.serial.write(string)
         else:
             raise BaseException('Serial Device isn\'t talking to us :(')
+        self.last_command_time = time.time()
+
+    def is_hanging(self):
+        now = time.time()
+        return (now - self.hanging_timeout) > self.last_command_time
