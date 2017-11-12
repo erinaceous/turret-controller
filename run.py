@@ -50,7 +50,7 @@ def main():
             s.target_x = j.x
             s.target_y = j.y
         s.fire = j.fire
-        s.scanning = True
+        s.scanning = False
         s.mode = 1
 
         a.command_async(

@@ -33,7 +33,7 @@ class Arduino(threading.Thread):
         self.last_y = 0
         self.fire = False
         self.fire_selector = 1
-        self.scan_selector = 1
+        self.scan_selector = 0
         self.retries = 0
         self.max_retries = max_retries
         self.min_x = min_x
